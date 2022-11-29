@@ -1,0 +1,92 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
+#include <locale.h>
+#include <time.h>
+#include <ctype.h>
+#include <string.h>
+#include <conio.h>
+#include <stddef.h>
+
+int new_zapisi(zapis, chislo_zapis);
+int pechat( zapis, chislo_zapis);
+int vivod_poisk( zapis, chislo_zapis);
+int poisk( zapis, chislo_zapis);
+
+struct database {
+	int number;
+	char tema[50];
+	char FIO[50];
+	int poradok;
+	int min;
+};
+typedef struct database kp;
+
+int main() {
+	setlocale(LC_ALL, "rus");
+	system("chcp 1251");
+	int g=1, z;
+	
+	int chislo_zapis = 0;
+	kp zapis[100], * ptr_zapis = &zapis[chislo_zapis];
+	//zapis[0] = (kp){0, 0, ' ', ' ', 0};
+	printf("Выберите пункт\n");
+	while(g != 0) {
+		printf("1)Добавить новую строку\n2)Вывод записей\n3)Поиск по критериям\n");
+		scanf("%d", &z);
+		switch (z) {
+		case 1:
+			chislo_zapis=new_zapisi(ptr_zapis, chislo_zapis);
+			break;
+		case 2:
+			pechat(ptr_zapis, chislo_zapis);
+			break;
+		case 3:
+			poisk(ptr_zapis, chislo_zapis);
+		case 0:
+			g = 0;
+			break;
+		}
+
+	}
+}
+int new_zapisi(kp* zapis, int chislo_zapis) {
+	for (int i = 0;i <= 0;i++) {
+		chislo_zapis++;
+		printf("тема доклада\n");
+		getchar();
+		fgets(zapis[chislo_zapis].tema, 50, stdin);
+
+		printf("Фамилия Имя Отчество\n");
+		
+		fgets(zapis[chislo_zapis].FIO, 50, stdin);
+
+		printf("# Секции\n");
+		scanf("%d", &zapis[chislo_zapis].number);
+
+		printf("Регламент в минутах\n");
+		scanf("%d", &zapis[chislo_zapis].min);
+		
+	}
+	return chislo_zapis;
+}
+int pechat(kp* zapis, int chislo_zapis) {
+	for (int chislo_new_zapisi =1 ;chislo_new_zapisi <= chislo_zapis;chislo_new_zapisi++) {
+		printf(" # Секции %d\n тема доклада-%s Ф.И.О-%s Регламент в минутах-%dmin\n\n", zapis[chislo_new_zapisi].number, zapis[chislo_new_zapisi].tema, zapis[chislo_new_zapisi].FIO, zapis[chislo_new_zapisi].min);
+	}
+}
+int vivod_poisk(kp* zapis, int chislo_zapis) {
+	printf(" # Секции %d\n тема доклада-%s Ф.И.О-%s Регламент в минутах-%dmin\n\n", zapis[chislo_zapis].number, zapis[chislo_zapis].tema, zapis[chislo_zapis].FIO, zapis[chislo_zapis].min);
+}
+
+int poisk(kp* zapis, int chislo_zapis) {
+	char name_poisk[50];
+	int number_poisk;
+	printf("Введите Ф.И.О\n");
+	getchar();
+	fgets(name_poisk, 50, stdin);
+	printf("Введите # секции\n");
+	scanf("%d", &number_poisk);
+	for (int i = 1;i <= chislo_zapis;i++) {
+		if (strcmp(name_poisk, zapis[i].FIO)==0 && (number_poisk == zapis[i].number)) vivod_poisk(zapis, i);
+	}
+}
