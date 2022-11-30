@@ -28,10 +28,9 @@ int main() {
 	
 	int chislo_zapis = 0;
 	kp zapis[100], * ptr_zapis = &zapis[chislo_zapis];
-	//zapis[0] = (kp){0, 0, ' ', ' ', 0};
 	printf("Выберите пункт\n");
 	while(g != 0) {
-		printf("1)Добавить новую строку\n2)Вывод записей\n3)Поиск по критериям\n");
+		printf("1)Добавить новую строку\n2)Вывод записей\n3)Поиск по критериям\n0)выход\n");
 		scanf("%d", &z);
 		switch (z) {
 		case 1:
@@ -42,6 +41,7 @@ int main() {
 			break;
 		case 3:
 			poisk(ptr_zapis, chislo_zapis);
+			break;
 		case 0:
 			g = 0;
 			break;
@@ -90,3 +90,4 @@ int poisk(kp* zapis, int chislo_zapis) {
 		if (strcmp(name_poisk, zapis[i].FIO)==0 && (number_poisk == zapis[i].number)) vivod_poisk(zapis, i);
 	}
 }
+
