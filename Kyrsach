@@ -6,6 +6,7 @@
 #include <string.h>
 #include <conio.h>
 #include <stddef.h>
+#include <stdlib.h>
 
 int new_zapisi(zapis, chislo_zapis);
 int pechat( zapis, chislo_zapis);
@@ -18,6 +19,7 @@ struct database {
 	char FIO[50];
 	int poradok;
 	int min;
+	int data[3];
 };
 typedef struct database kp;
 
@@ -42,6 +44,12 @@ int main() {
 		case 3:
 			poisk(ptr_zapis, chislo_zapis);
 			break;
+		case 4:
+			sortirovka(ptr_zapis, chislo_zapis);
+			break;
+		case 5:
+			/*sort(ptr_zapis,chislo_zapis);*/
+				break;
 		case 0:
 			g = 0;
 			break;
@@ -50,28 +58,34 @@ int main() {
 	}
 }
 int new_zapisi(kp* zapis, int chislo_zapis) {
-	for (int i = 0;i <= 0;i++) {
-		chislo_zapis++;
-		printf("тема доклада\n");
-		getchar();
-		fgets(zapis[chislo_zapis].tema, 50, stdin);
+	for (int i = 0;i <= chislo_zapis;i++) {
 
-		printf("Фамилия Имя Отчество\n");
-		
-		fgets(zapis[chislo_zapis].FIO, 50, stdin);
+		printf("Дата научного доклада\n");
+		scanf("%d.%d.%d", &zapis[i].data[0], &zapis[i].data[1], &zapis[i].data[2]);
 
 		printf("# Секции\n");
 		scanf("%d", &zapis[chislo_zapis].number);
+		getchar();
+		printf("тема доклада\n");
+		fgets(zapis[chislo_zapis].tema, 50, stdin);
+
+		printf("Фамилия Имя Отчество\n");
+		fgets(zapis[chislo_zapis].FIO, 50, stdin);
+
+		printf("порядок\n");
+		printf("%d", i +1);
+		printf("\n");
 
 		printf("Регламент в минутах\n");
 		scanf("%d", &zapis[chislo_zapis].min);
 		
+		system("pause");
 	}
-	return chislo_zapis;
+	return ;
 }
 int pechat(kp* zapis, int chislo_zapis) {
-	for (int chislo_new_zapisi =1 ;chislo_new_zapisi <= chislo_zapis;chislo_new_zapisi++) {
-		printf(" # Секции %d\n тема доклада-%s Ф.И.О-%s Регламент в минутах-%dmin\n\n", zapis[chislo_new_zapisi].number, zapis[chislo_new_zapisi].tema, zapis[chislo_new_zapisi].FIO, zapis[chislo_new_zapisi].min);
+	for (int chislo_new_zapisi =0 ;chislo_new_zapisi <= chislo_zapis;chislo_new_zapisi++) {
+		printf("Дата научного доклада-%d.%d.%d\n # Секции %d\n тема доклада-%s Ф.И.О-%s Регламент в минутах-%dmin\n\n", zapis[chislo_new_zapisi].data[0], zapis[chislo_new_zapisi].data[1], zapis[chislo_new_zapisi].data[2], zapis[chislo_new_zapisi].number, zapis[chislo_new_zapisi].tema, zapis[chislo_new_zapisi].FIO, zapis[chislo_new_zapisi].min);
 	}
 }
 int vivod_poisk(kp* zapis, int chislo_zapis) {
@@ -86,8 +100,40 @@ int poisk(kp* zapis, int chislo_zapis) {
 	fgets(name_poisk, 50, stdin);
 	printf("Введите # секции\n");
 	scanf("%d", &number_poisk);
-	for (int i = 1;i <= chislo_zapis;i++) {
+	for (int i = 0;i <= chislo_zapis;i++) {
 		if (strcmp(name_poisk, zapis[i].FIO)==0 && (number_poisk == zapis[i].number)) vivod_poisk(zapis, i);
 	}
+}
+int compare_gpa(const void* av, const void* bv) {
+	const kp* a = av, * b = bv;
+	if (a->number < b->number) return -1;
+	if (a->number > b->number) return 1;
+	return 0;
+}
+
+int compare_name(const void* av, const void* bv) {
+	const kp* a = av, * b = bv;
+	return -strcmp(a->number, b->number);
+}
+
+int compare_gpaname(const void* av, const void* bv) {
+	const kp* a = av, * b = bv;
+	if (a->number < b->number) return -1;
+	if (a->number > b->number) return 1;
+	return -strcmp(a->number, b->number);
+}
+//int sort(kp* zapis, int chislo_zapis) {
+//	qsort(zapis, 100, sizeof(kp),compare_gran);
+//	for (int i = 0;i < 15;i++) {
+//		printf("%d\n", zapis[i].number);
+//	}
+//}
+int sortirovka(kp* zapis,int chislo_zapis) {
+	int e = 0;
+	for (int chislo_new_zapisi = 1;chislo_new_zapisi <= chislo_zapis;chislo_new_zapisi++) {
+		e += zapis[chislo_new_zapisi].min;
+		printf(" Регламент в минутах-%dmin\n\n", zapis[chislo_new_zapisi].min);
+	}
+	printf("sredthnach-%d\n", e/chislo_zapis);
 }
 
