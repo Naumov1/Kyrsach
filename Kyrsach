@@ -29,26 +29,26 @@ int main() {
 	int g=1, z;
 	
 	int chislo_zapis = 0;
-	kp zapis[100], * ptr_zapis = &zapis[chislo_zapis];
+	kp zapis[100];
 	printf("Выберите пункт\n");
 	while(g != 0) {
 		printf("1)Добавить новую строку\n2)Вывод записей\n3)Поиск по критериям\n0)выход\n");
 		scanf("%d", &z);
 		switch (z) {
 		case 1:
-			chislo_zapis=new_zapisi(ptr_zapis, chislo_zapis);
+			chislo_zapis=new_zapisi(zapis, chislo_zapis);
 			break;
 		case 2:
-			pechat(ptr_zapis, chislo_zapis);
+			pechat(zapis, chislo_zapis);
 			break;
 		case 3:
-			poisk(ptr_zapis, chislo_zapis);
+			poisk(zapis, chislo_zapis);
 			break;
 		case 4:
-			sortirovka(ptr_zapis, chislo_zapis);
+			sortirovka(zapis, chislo_zapis);
 			break;
 		case 5:
-			/*sort(ptr_zapis,chislo_zapis);*/
+			/*sort(zapis,chislo_zapis);*/
 				break;
 		case 0:
 			g = 0;
@@ -58,11 +58,9 @@ int main() {
 	}
 }
 int new_zapisi(kp* zapis, int chislo_zapis) {
-	for (int i = 0;i <= chislo_zapis;i++) {
-
 		printf("Дата научного доклада\n");
-		scanf("%d.%d.%d", &zapis[i].data[0], &zapis[i].data[1], &zapis[i].data[2]);
-
+		scanf("%d.%d.%d", &zapis[chislo_zapis].data[0], &zapis[chislo_zapis].data[1], &zapis[chislo_zapis].data[2]);
+		getchar();
 		printf("# Секции\n");
 		scanf("%d", &zapis[chislo_zapis].number);
 		getchar();
@@ -73,20 +71,23 @@ int new_zapisi(kp* zapis, int chislo_zapis) {
 		fgets(zapis[chislo_zapis].FIO, 50, stdin);
 
 		printf("порядок\n");
-		printf("%d", i +1);
+		scanf("%d", );
 		printf("\n");
 
 		printf("Регламент в минутах\n");
 		scanf("%d", &zapis[chislo_zapis].min);
 		
 		system("pause");
-	}
-	return ;
+		chislo_zapis++;
+		return chislo_zapis;
+
 }
 int pechat(kp* zapis, int chislo_zapis) {
-	for (int chislo_new_zapisi =0 ;chislo_new_zapisi <= chislo_zapis;chislo_new_zapisi++) {
-		printf("Дата научного доклада-%d.%d.%d\n # Секции %d\n тема доклада-%s Ф.И.О-%s Регламент в минутах-%dmin\n\n", zapis[chislo_new_zapisi].data[0], zapis[chislo_new_zapisi].data[1], zapis[chislo_new_zapisi].data[2], zapis[chislo_new_zapisi].number, zapis[chislo_new_zapisi].tema, zapis[chislo_new_zapisi].FIO, zapis[chislo_new_zapisi].min);
+	for (int i =0 ;i <= chislo_zapis-1;i++) {
+		printf("Дата научного доклада-%d.%d.%d\n # Секции %d\n тема доклада-%s Ф.И.О-%s Регламент в минутах-%dmin\n\n", zapis[i].data[0], zapis[i].data[1], zapis[i].data[2], zapis[i].number, zapis[i].tema, zapis[i].FIO, zapis[i].min);
+		
 	}
+
 }
 int vivod_poisk(kp* zapis, int chislo_zapis) {
 	printf(" # Секции %d\n тема доклада-%s Ф.И.О-%s Регламент в минутах-%dmin\n\n", zapis[chislo_zapis].number, zapis[chislo_zapis].tema, zapis[chislo_zapis].FIO, zapis[chislo_zapis].min);
@@ -130,10 +131,9 @@ int compare_gpaname(const void* av, const void* bv) {
 //}
 int sortirovka(kp* zapis,int chislo_zapis) {
 	int e = 0;
-	for (int chislo_new_zapisi = 1;chislo_new_zapisi <= chislo_zapis;chislo_new_zapisi++) {
-		e += zapis[chislo_new_zapisi].min;
-		printf(" Регламент в минутах-%dmin\n\n", zapis[chislo_new_zapisi].min);
+	for (int i = 1;i <= chislo_zapis;i++) {
+		e += zapis[i].min;
+		printf(" Регламент в минутах-%dmin\n\n", zapis[i].min);
 	}
 	printf("sredthnach-%d\n", e/chislo_zapis);
 }
-
