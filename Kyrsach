@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include <locale.h>
 #include <time.h>
-#include <ctype.h>
 #include <string.h>
 #include <conio.h>
 #include <stddef.h>
@@ -12,6 +11,11 @@ int new_zapisi(zapis, chislo_zapis);
 int pechat( zapis, chislo_zapis);
 int vivod_poisk( zapis, chislo_zapis);
 int poisk( zapis, chislo_zapis);
+void sohr(zapis, chislo_zapis,out);
+int sortirovka(zapis, chislo_zapis);
+void sohr(zapis, chislo_zapis, out);
+int read(zapis,chislo_zapis, out);
+void ShellSort(zapis, chislo_zapis);
 
 struct database {
 	int number;
@@ -27,29 +31,44 @@ int main() {
 	setlocale(LC_ALL, "rus");
 	system("chcp 1251");
 	int g=1, z;
-	
+	FILE* out;
 	int chislo_zapis = 0;
-	kp zapis[100];
+	kp* zapis = NULL;
+
+
 	printf("Выберите пункт\n");
 	while(g != 0) {
-		printf("1)Добавить новую строку\n2)Вывод записей\n3)Поиск по критериям\n0)выход\n");
+		printf("1)Добавить новую строку\n2)Вывод записей\n3)Поиск по критериям\n4)сортировка\n0)выход\n");
 		scanf("%d", &z);
 		switch (z) {
 		case 1:
+			zapis = realloc(zapis, (chislo_zapis + 1) * sizeof(kp));
 			chislo_zapis=new_zapisi(zapis, chislo_zapis);
+			out = fopen("kp.txt","a");
+			sohr(zapis, chislo_zapis, out);
+			fclose(out);
 			break;
 		case 2:
+			out = fopen("kp.txt", "r");
+			int str = 0;
+			while (!feof(out)) 
+			{
+				if (fgetc(out) == '\n')
+					str++;
+			}
+			str = str / 4;
+			zapis = (kp*)malloc(str * sizeof(kp));
+			chislo_zapis=read(zapis,chislo_zapis, out);
 			pechat(zapis, chislo_zapis);
 			break;
 		case 3:
 			poisk(zapis, chislo_zapis);
 			break;
 		case 4:
-			sortirovka(zapis, chislo_zapis);
+			out = fopen("kp.txt", "r");
+			chislo_zapis = read(zapis, chislo_zapis, out);
+			ShellSort(zapis, chislo_zapis);
 			break;
-		case 5:
-			/*sort(zapis,chislo_zapis);*/
-				break;
 		case 0:
 			g = 0;
 			break;
@@ -70,10 +89,6 @@ int new_zapisi(kp* zapis, int chislo_zapis) {
 		printf("Фамилия Имя Отчество\n");
 		fgets(zapis[chislo_zapis].FIO, 50, stdin);
 
-		printf("порядок\n");
-		scanf("%d", );
-		printf("\n");
-
 		printf("Регламент в минутах\n");
 		scanf("%d", &zapis[chislo_zapis].min);
 		
@@ -90,7 +105,7 @@ int pechat(kp* zapis, int chislo_zapis) {
 
 }
 int vivod_poisk(kp* zapis, int chislo_zapis) {
-	printf(" # Секции %d\n тема доклада-%s Ф.И.О-%s Регламент в минутах-%dmin\n\n", zapis[chislo_zapis].number, zapis[chislo_zapis].tema, zapis[chislo_zapis].FIO, zapis[chislo_zapis].min);
+	printf("Дата научного доклада-%d.%d.%d\n# Секции %d\n тема доклада-%s Ф.И.О-%s Регламент в минутах-%dmin\n\n", zapis[chislo_zapis].data[0], zapis[chislo_zapis].data[1], zapis[chislo_zapis].data[2], zapis[chislo_zapis].number, zapis[chislo_zapis].tema, zapis[chislo_zapis].FIO, zapis[chislo_zapis].min);
 }
 
 int poisk(kp* zapis, int chislo_zapis) {
@@ -105,35 +120,69 @@ int poisk(kp* zapis, int chislo_zapis) {
 		if (strcmp(name_poisk, zapis[i].FIO)==0 && (number_poisk == zapis[i].number)) vivod_poisk(zapis, i);
 	}
 }
-int compare_gpa(const void* av, const void* bv) {
-	const kp* a = av, * b = bv;
-	if (a->number < b->number) return -1;
-	if (a->number > b->number) return 1;
-	return 0;
-}
-
-int compare_name(const void* av, const void* bv) {
-	const kp* a = av, * b = bv;
-	return -strcmp(a->number, b->number);
-}
-
-int compare_gpaname(const void* av, const void* bv) {
-	const kp* a = av, * b = bv;
-	if (a->number < b->number) return -1;
-	if (a->number > b->number) return 1;
-	return -strcmp(a->number, b->number);
-}
-//int sort(kp* zapis, int chislo_zapis) {
-//	qsort(zapis, 100, sizeof(kp),compare_gran);
-//	for (int i = 0;i < 15;i++) {
-//		printf("%d\n", zapis[i].number);
-//	}
-//}
-int sortirovka(kp* zapis,int chislo_zapis) {
-	int e = 0;
-	for (int i = 1;i <= chislo_zapis;i++) {
-		e += zapis[i].min;
-		printf(" Регламент в минутах-%dmin\n\n", zapis[i].min);
+void sohr(kp* zapis, int chislo_zapis, FILE*out) {
+	for (int i = 0;i < chislo_zapis;i++) {
+		fprintf(out, "%d ", zapis[i].data[0]);
+		fprintf(out, "%d ", zapis[i].data[1]);
+		fprintf(out, "%d\n", zapis[i].data[2]);
+		fprintf(out, "%d\n", zapis[i].number);
+		fprintf(out, "%s", zapis[i].tema);
+		fprintf(out, "%s", zapis[i].FIO);
+		fprintf(out, "%d ", zapis[i].min);
 	}
-	printf("sredthnach-%d\n", e/chislo_zapis);
 }
+int read(kp* zapis,int chislo_zapis, FILE* out) {
+	int str=0, i=0;
+	char b[50];
+	while (!feof(out)) {
+		if (fgetc(out) == '\n')
+			str++;
+	}
+	str = str / 4;
+	out = fopen("kp.txt", "r");
+	for (int i = 0;i < str;i++) {
+		char b[50];
+		if (feof(out) == 0)
+		{
+			fscanf(out, "%d", &zapis[i].data[0]);
+			fscanf(out, "%d", &zapis[i].data[1]);
+			fscanf(out, "%d", &zapis[i].data[2]);
+			fgets(b, 50, out);
+			fscanf(out, "%d", &zapis[i].number);
+			fgets(b, 50, out);
+			fgets(zapis[i].tema, 50, out);
+			fgets(zapis[i].FIO, 50, out);
+			fscanf(out, "%d", &zapis[i].min);
+			fgets(b, 50, out);
+			i++;
+		}
+		else break;
+	}
+	fclose(out);
+	return str;
+
+}
+void ShellSort(kp* zapis, int chislo_zapis)
+{
+	int i, j, step;
+	int tmp;
+	for (step = chislo_zapis / 2; step > 0; step /= 2)
+		for (i = step; i < chislo_zapis; i++)
+		{
+			tmp = zapis[i].number;
+			for (j = i; j >= step; j -= step)
+			{
+				if (tmp < zapis[j - step].number)
+					zapis[j] = zapis[j - step];
+				else
+					break;
+			}
+			zapis[j].number = tmp;
+		}
+	for (int i = 0;i < chislo_zapis;i++) {
+		printf("# Секции %d\n\n", zapis[i].number);
+	}
+}
+
+
+
