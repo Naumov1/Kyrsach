@@ -8,13 +8,12 @@
 
 int new_zapisi(zapis, chislo_zapis);
 int pechat(zapis, chislo_zapis,i);
-int poisk(zapis, chislo_zapis, number_poisk, name_poisk);
-int vivod_poisk(zapis, chislo_zapis);
+void poisk(zapis, chislo_zapis, number_poisk, name_poisk);
+void poisk_sec(zapis, chislo_zapis, number_poisk);
 void sohr(zapis, chislo_zapis);
 int read(zapis, chislo_zapis);
 void sort(zapis, chislo_zapis);
 void redakt(zapis, number, chislo_zapis);
-void poisk_sec(zapis, chislo_zapis, number_poisk);
 int compare_sek( av, bv);
 
 struct database {
@@ -142,19 +141,14 @@ int pechat(kp* zapis, int chislo_zapis, int i) {
 		printf("-----------запись %d------------\n", i + 1);
 		printf("Дата научного доклада-%d.%d.%d\n# Секции %d\nтема доклада-%sФ.И.О-%sРегламент в минутах-%dmin\n\n", zapis[i].data[0], zapis[i].data[1], zapis[i].data[2], zapis[i].number, zapis[i].tema, zapis[i].FIO, zapis[i].min);
 }
-int vivod_poisk(kp* zapis, int chislo_zapis) {
-	printf("Дата научного доклада-%d.%d.%d\n# Секции %d\n тема доклада-%s Ф.И.О-%s Регламент в минутах-%dmin\n\n", zapis[chislo_zapis].data[0], zapis[chislo_zapis].data[1], zapis[chislo_zapis].data[2], zapis[chislo_zapis].number, zapis[chislo_zapis].tema, zapis[chislo_zapis].FIO, zapis[chislo_zapis].min);
-}
-
-int poisk(kp* zapis, int chislo_zapis, int number_poisk, char* name_poisk) {
+void poisk(kp* zapis, int chislo_zapis, int number_poisk, char* name_poisk) {
 	for (int i = 0; i <= chislo_zapis; i++) {
 		if (strcmp(name_poisk, zapis[i].FIO) == 0 && (number_poisk == zapis[i].number)) pechat(zapis,chislo_zapis, i);
 	}
-	return 1;
 }
 void poisk_sec(kp* zapis, int chislo_zapis, int number_poisk) {
 	for (int i = 0; i <= chislo_zapis; i++)
-		if (number_poisk == zapis[i].number) vivod_poisk(zapis, i);
+		if (number_poisk == zapis[i].number) pechat(zapis, chislo_zapis, i);
 }
 
 
