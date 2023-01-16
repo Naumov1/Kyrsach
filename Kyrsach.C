@@ -8,8 +8,8 @@
 
 int new_zapisi(zapis, chislo_zapis);
 int pechat(zapis, chislo_zapis,i);
-void poisk(zapis, chislo_zapis, number_poisk, name_poisk);
-void poisk_sec(zapis, chislo_zapis, number_poisk);
+int* poisk(zapis, chislo_zapis, number_poisk, name_poisk, mas_ind);
+int* poisk_sec(zapis, chislo_zapis, number_poisk, mas_ind);
 void sohr(zapis, chislo_zapis);
 int read(zapis, chislo_zapis);
 void sort(zapis, chislo_zapis);
@@ -63,13 +63,16 @@ int main() {
 			zapis = (kp*)malloc(str * sizeof(kp));
 
 			chislo_zapis = read(zapis, chislo_zapis);
-			for(int i=0;i<chislo_zapis;i++)
-			pechat(zapis, chislo_zapis,i);
+			printf("|Дата научного доклада|  Секции  |            тема доклада            |                       Ф.И.О                        |Регламент в минутах|\n");
+			for (int i = 0;i < chislo_zapis;i++) {
+				//printf("-----------запись %d------------\n", i + 1);
+				pechat(zapis[i]);
+			}
 			break;
 		case 3:
-
 			printf("Выберите поиск:\n1-по ФИО и номеру секции\n2-по номеру секции\n");
 			scanf("%d", &p);
+			int* mas_ind = malloc(chislo_zapis * sizeof(kp));	
 
 			if (p == 1)
 			{
@@ -78,13 +81,19 @@ int main() {
 				fgets(name_poisk, 50, stdin);
 				printf("Введите # секции\n");
 				scanf("%d", &number_poisk);
-				poisk(zapis, chislo_zapis, number_poisk, name_poisk);
+				mas_ind = poisk(zapis, chislo_zapis, number_poisk, name_poisk, mas_ind);
+
+				for (int i = 0; i < chislo_zapis; i++)
+					if (mas_ind[i] == 1) pechat(zapis[i]);
 			}
 			else if (p == 2)
 			{
 				printf("Введите # секции\n");
 				scanf("%d", &number_poisk);
-				poisk_sec(zapis, chislo_zapis, number_poisk);
+				mas_ind = poisk_sec(zapis, chislo_zapis, number_poisk, mas_ind);
+
+				for (int i = 0; i < chislo_zapis; i++)
+					if (mas_ind[i] == 1) pechat(zapis[i]);
 			}
 			break;
 		case 4:
@@ -94,7 +103,6 @@ int main() {
 		case 5:
 		{
 			int number;
-
 			printf("Введите номер записи, которую хотите изменить\n");
 			scanf("%d", &number);
 			getchar();
@@ -137,20 +145,29 @@ int new_zapisi(kp* zapis, int chislo_zapis) {
 	chislo_zapis++;
 	return chislo_zapis;
 }
-int pechat(kp* zapis, int chislo_zapis, int i) {
-		printf("-----------запись %d------------\n", i + 1);
-		printf("Дата научного доклада-%d.%d.%d\n# Секции %d\nтема доклада-%sФ.И.О-%sРегламент в минутах-%dmin\n\n", zapis[i].data[0], zapis[i].data[1], zapis[i].data[2], zapis[i].number, zapis[i].tema, zapis[i].FIO, zapis[i].min);
+int pechat(kp zapis) {
+	/*printf("|Дата научного доклада|  Секции  |            тема доклада            |                       Ф.И.О                        |Регламент в минутах|\n");*/
+	printf("-------------------------------------------------------------------------------------------------------------------------------------------------|\n");
+		printf("|%5d.%d.%4d", zapis.data[0], zapis.data[1], zapis.data[2]);
+		printf("%15d", zapis.number);
+		printf("%30s", zapis.tema);
+		printf("%50s", zapis.FIO);
+		printf("%25dmin\n", zapis.min);
 }
-void poisk(kp* zapis, int chislo_zapis, int number_poisk, char* name_poisk) {
+int* poisk(kp* zapis, int chislo_zapis, int number_poisk, char* name_poisk) {
 	for (int i = 0; i <= chislo_zapis; i++) {
-		if (strcmp(name_poisk, zapis[i].FIO) == 0 && (number_poisk == zapis[i].number)) pechat(zapis,chislo_zapis, i);
+		if (strcmp(name_poisk, zapis[i].FIO) == 0 && (number_poisk == zapis[i].number)) return i;
 	}
+	 return -1;
 }
-void poisk_sec(kp* zapis, int chislo_zapis, int number_poisk) {
+int* poisk_sec(kp* zapis, int chislo_zapis, int number_poisk, int* mas_ind) {
 	for (int i = 0; i <= chislo_zapis; i++)
-		if (number_poisk == zapis[i].number) pechat(zapis, chislo_zapis, i);
+	{
+		if (number_poisk == zapis[i].number) mas_ind[i] = 1;
+		else mas_ind[i] = 0;
+	}
+	return mas_ind;
 }
-
 
 void sohr(kp* zapis, int chislo_zapis, int o_f)
 {
@@ -180,7 +197,11 @@ int read(kp* zapis, int chislo_zapis) {
 		fscanf(out, "%d\n", &zapis[i].data[2]);
 		fscanf(out, "%d\n", &zapis[i].number);
 		fgets(zapis[i].tema, 50, out);
+		strtok(zapis[i].tema, "\n");
+		printf("\n");
 		fgets(zapis[i].FIO, 50, out);
+		strtok(zapis[i].FIO, "\n");
+		printf("\n");
 		fscanf(out, "%d\n", &zapis[i].min);
 		i++;
 	}
@@ -203,9 +224,11 @@ void sort(kp* zapis, int chislo_zapis) {
 
 	for (int i = 0; i < chislo_zapis; i++) {
 		if (array[zapis[i].number] > 0) {
-			pechat(zapis, chislo_zapis, i);
+			pechat(zapis[i]);
 			if (zapis[i].number!=zapis[i+1].number)
+				printf("-----------------------------\n");
 			printf("Среднее время секции %d = %g\n", zapis[i].number, (float)(array[zapis[i].number]) / count[zapis[i].number]);
+
 		}
 	}
 }
